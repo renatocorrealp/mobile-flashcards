@@ -1,14 +1,5 @@
 import { combineReducers } from 'redux';
-import { RECEIVE_DECKS } from '../actions/DeckActions'
+import { RECEIVE_DECKS, UPDATE_SELECTED_DECK } from '../actions/DeckActions'
+import { decks, selectedDeck } from './DeckReducers';
 
-function decks (state = {}, action) {
-  switch (action.type) {
-    case RECEIVE_DECKS :{
-        return action.decks
-    }
-    default :
-      return state
-  }
-}
-
-export default combineReducers({ decks });
+export default combineReducers({ decks, selectedDeck });

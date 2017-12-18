@@ -2,19 +2,30 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import { ice, gray } from '../styles/colors';
 import { StackNavigator } from 'react-navigation';
+import { updateSelectedDeck } from '../actions/DeckActions';
+import { connect } from 'react-redux';
 
-export default function DeckPreview ({ deck, navigation }){
-  return(
-      <TouchableHighlight onPress={() => navigation.navigate('DeckDetails', { deck: deck })}
-      underlayColor={ ice }>
-        <View style={styles.deckContainer}>
-          <View style={styles.subContainer}>
-            <Text style={styles.deckName}>{deck.title}</Text>
-            <Text style={styles.cardsTotal}>{deck.questions.length} cards</Text>
+class DeckPreview extends Component{
+  selectDeck = (deck) => {
+    const { updateSelectedDeck, navigation } = this.props;
+    updateSelectedDeck(deck);
+    navigation.navigate('DeckDetails');
+  }
+
+  render(){
+    const { deck } = this.props;
+    return(
+        <TouchableHighlight onPress={() => this.selectDeck(deck)}
+        underlayColor={ ice }>
+          <View style={styles.deckContainer}>
+            <View style={styles.subContainer}>
+              <Text style={styles.deckName}>{deck.title}</Text>
+              <Text style={styles.cardsTotal}>{deck.questions.length} cards</Text>
+            </View>
           </View>
-        </View>
-      </TouchableHighlight>
-    )
+        </TouchableHighlight>
+      )
+  }
 }
 
 const styles = StyleSheet.create({
@@ -40,3 +51,15 @@ const styles = StyleSheet.create({
   }
 
 });
+
+const mapStateToProps = (state) =>{
+  return state;
+}
+
+const mapDispatchToProps = (dispatch) =>{
+  return {
+    updateSelectedDeck: (deck) => dispatch(updateSelectedDeck(deck))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps) (DeckPreview);

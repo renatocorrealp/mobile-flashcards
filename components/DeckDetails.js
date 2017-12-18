@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import { gray, defaultColor, black} from '../styles/colors';
+import { connect } from 'react-redux';
 
-export default class DeckDetails extends Component {
+class DeckDetails extends Component {
   render() {
-    const { navigation } = this.props;
-    const { deck } = navigation.state.params;
+    const { navigation, deck } = this.props;
 
     return (
       <View style={styles.deckContainer}>
         <Text style={styles.deckName}>{deck.title}</Text>
         <Text style={styles.cardsTotal}>{deck.questions.length} cards</Text>
         <TouchableHighlight style={[styles.addButton, styles.buttons]} underlayColor={ gray }
-          onPress={()=> console.log('nada')}>
+          onPress={()=> navigation.navigate('AddCard')}>
           <Text style={styles.buttonText}>Add Card</Text>
         </TouchableHighlight>
 
         <TouchableHighlight style={[styles.quizButton, styles.buttons]} underlayColor={ gray }
-          onPress={()=> navigation.navigate('Quiz', { deck: deck })}>
+          onPress={()=> navigation.navigate('Quiz')}>
           <Text style={[styles.buttonText, {color: defaultColor}]}>Start Quiz</Text>
         </TouchableHighlight>
       </View>
@@ -60,3 +60,9 @@ const styles = StyleSheet.create({
   }
 
 });
+
+const mapStateToProps = ({ selectedDeck }) =>{
+  return { deck: selectedDeck };
+}
+
+export default connect(mapStateToProps) (DeckDetails);

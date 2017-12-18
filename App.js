@@ -12,6 +12,7 @@ import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import reducer from './reducers';
 import Quiz from './components/Quiz';
+import AddCard from './components/AddCard';
 
 const MainTab = TabNavigator({
   DecksList: {
@@ -67,6 +68,16 @@ const MainNavigator = StackNavigator({
         backgroundColor: black,
       },
       title: 'Quiz'
+    }
+  },
+  AddCard: {
+    screen: AddCard,
+    navigationOptions: {
+      headerTintColor: defaultColor,
+      headerStyle: {
+        backgroundColor: black,
+      },
+      title: 'Add Card'
     }
   }
 });

@@ -1,10 +1,11 @@
 import { AsyncStorage } from 'react-native';
+import { generateNewData } from './DataManager';
 
 const DECKS_STORAGE_KEY = 'mobile-flashcards:decks';
 
 export const getAllDecks = () =>
    AsyncStorage.getItem(DECKS_STORAGE_KEY)
-    .then((decks) =>  {
+    .then(decks =>  {
       if(decks && decks.length > 0){
         return JSON.parse(decks);
       }
@@ -15,45 +16,26 @@ export const getAllDecks = () =>
       return decksList;
     })
 
-const generateNewData = () => {
-  const decksList =
-  [
-    {
-      id: 1,
-      title: 'Math Questions',
-      questions: [
-        {
-          question: '3 x 4 = ?',
-          asnwer: '12'
-        },
-        {
-          question: '100 / ? = 25',
-          asnwer: '25'
-        }
-      ]
-    },
+export const addDeck = (deck) => {
+  return AsyncStorage.getItem(DECKS_STORAGE_KEY).then(result => {
+    const decksList = JSON.parse(result);
+    decksList.push(deck);
+    return AsyncStorage.setItem(DECKS_STORAGE_KEY, JSON.stringify(decksList));
+  })
+}
 
-    {
-      id: 2,
-      title: 'Geografy',
-      questions: [
-        {
-          question: 'How many continents exists in the world?',
-          asnwer: '7'
-        },
-        {
-          question: 'What\'s the Ireland capital?',
-          asnwer: 'Dublin'
-        }
-      ]
-    },
 
-    {
-      id: 3,
-      title: 'Easy questions',
-      questions: []
-    }
-  ];
+export const updateDeck = (deckToUpdate) => {
+  return AsyncStorage.getItem(DECKS_STORAGE_KEY).then(result => {
+    let decksList = JSON.parse(result);
 
-  return decksList;
+    decksList = decksList.map((deck) => {
+      if(deckToUpdate.id === deck.id){
+        return deckToUpdate;
+      }
+      return deck;
+    });
+
+    return AsyncStorage.setItem(DECKS_STORAGE_KEY, JSON.stringify(decksList));
+  })
 }

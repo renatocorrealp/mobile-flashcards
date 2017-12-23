@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableHighlight, ActivityIndicator } from 'r
 import { connect } from 'react-redux';
 import { ice, defaultColor, red, green, black } from '../styles/colors';
 import QuizResult from './QuizResult';
+import { FontAwesome } from '@expo/vector-icons';
 
 class Quiz extends Component {
   state = {
@@ -15,13 +16,7 @@ class Quiz extends Component {
   }
 
   componentDidMount = () => {
-    const { deck } = this.props;
-    this.setState(
-      {
-        currentQuestion: deck.questions[0],
-        cardsTotal: deck.questions.length
-      }
-    );
+    this.initQuiz();
   }
 
   saveAnswerPoint = (answer) => {
@@ -55,11 +50,26 @@ class Quiz extends Component {
     this.setState({showAnswer: true});
   }
 
+  initQuiz = () => {
+    const { deck } = this.props;
+    this.setState(
+      {
+        currentQuestion: deck.questions[0],
+        cardsTotal: deck.questions.length,
+        currentQuestionNumber: 1,
+        currentScore: 0,
+        showAnswer: false,
+        showResults: false
+      }
+    );
+  }
+
   render(){
+    const { navigation } = this.props;
     const { currentQuestion, currentScore, cardsTotal, currentQuestionNumber, showAnswer, showResults } = this.state;
 
     if(showResults){
-      return (<QuizResult totalScore={ currentScore }/>)
+      return (<QuizResult totalScore={ currentScore } restartQuiz={ this.initQuiz } navigation= { navigation }/>)
     }
 
     if(!currentQuestion){
@@ -88,12 +98,20 @@ class Quiz extends Component {
             <TouchableHighlight style={ [styles.buttons, styles.correctButton] }
               onPress={ () => this.saveAnswerPoint(true) }
               underlayColor={ ice }>
-              <Text style={ styles.buttonText }>Correct</Text>
+              <View style={styles.buttonsContainer} >
+                <FontAwesome name='check' size={30} color={ black }
+                style={{marginRight: 20}}/>
+                <Text style={ styles.buttonText }>Correct</Text>
+              </View>
             </TouchableHighlight>
             <TouchableHighlight style={ [styles.buttons, styles.incorrectButton] }
               onPress={ () => this.saveAnswerPoint(false) }
               underlayColor={ ice }>
-              <Text style={ styles.buttonText }>Incorrect</Text>
+              <View style={styles.buttonsContainer} >
+                <FontAwesome name='close' size={30} color={ black }
+                style={{marginRight: 20}}/>
+                <Text style={ styles.buttonText }>Incorrect</Text>
+              </View>
             </TouchableHighlight>
           </View>
           )
@@ -136,6 +154,11 @@ const styles = StyleSheet.create({
     alignItems: 'center'
 
   },
+  buttonsContainer:{
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   turnCardButton:{
     marginTop: 80,
     borderColor: black,
@@ -150,7 +173,9 @@ const styles = StyleSheet.create({
     backgroundColor: red
   },
   buttonText:{
-    fontSize: 20
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginRight: 10
   }
 
 });

@@ -13,6 +13,7 @@ import { Provider } from 'react-redux';
 import reducer from './reducers';
 import Quiz from './components/Quiz';
 import AddCard from './components/AddCard';
+import { scheduleNotification } from './utils/helpers';
 
 const MainTab = TabNavigator({
   DecksList: {
@@ -85,6 +86,10 @@ const MainNavigator = StackNavigator({
 const store = createStore(reducer, applyMiddleware(thunk));
 
 export default class App extends React.Component {
+  componentDidMount = () => {
+    scheduleNotification();
+  }
+
   render() {
     return (
       <Provider store={store}>

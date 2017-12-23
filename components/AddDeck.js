@@ -1,32 +1,44 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, KeyboardAvoidingView, TextInput, TouchableHighlight } from 'react-native';
 import { saveDeck, updateSelectedDeck } from '../actions/DeckActions';
-import { defaultColor, black } from '../styles/colors';
+import { defaultColor, black, red } from '../styles/colors';
 import { getNewDeck } from '../utils/DataManager';
 import { connect } from 'react-redux';
 
 class AddDeck extends Component {
   state = {
-    deckTitle: null
+    deckTitle: null,
+    emptyTitle: false
   }
 
   submitDeck = () => {
     const { saveDeck, navigation, updateSelectedDeck } = this.props;
-    const { deckTitle } = this.state;
+    const { deckTitle, emptyTitle } = this.state;
     const newDeck = getNewDeck(deckTitle);
+
+    if(!deckTitle){
+      this.setState({
+        emptyTitle: true
+      });
+      return;
+    }
+
     saveDeck(newDeck);
     updateSelectedDeck(newDeck);
-    this.setState({ deckTitle: null });
+    this.setState({
+      deckTitle: null,
+      emptyTitle: false
+    });
     navigation.navigate('DeckDetails');
   }
 
   render() {
-    const { deckTitle } = this.state;
+    const { deckTitle, emptyTitle } = this.state;
     return (
         <KeyboardAvoidingView style={ styles.addDeckContainer }>
           <Text style={ styles.description }>What is the title of your new Deck?</Text>
             <TextInput onChangeText={ (deckTitle) => this.setState({ deckTitle }) }
-            style={ styles.deckTitle }
+            style={[ styles.deckTitle, emptyTitle ? styles.emptyField : {} ]}
             placeholder='Deck title'
             value={ deckTitle }/>
           <TouchableHighlight onPress={() => this.submitDeck()}
@@ -66,6 +78,10 @@ const styles = StyleSheet.create({
     marginTop: 90,
     backgroundColor: black,
   },
+  emptyField: {
+    borderColor: red
+  }
+
 });
 
 const mapStateToProps = (state) =>{

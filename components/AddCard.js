@@ -1,39 +1,61 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, TextInput, TouchableHighlight, Alert, KeyboardAvoidingView } from 'react-native';
 import { fetchDeck, updateSelectedDeck } from '../actions/DeckActions';
-import { defaultColor, black } from '../styles/colors';
+import { defaultColor, black, red } from '../styles/colors';
 import { getNewCard } from '../utils/DataManager';
 import { connect } from 'react-redux';
 
 class AddCard extends Component {
   state = {
     question: null,
-    answer: null
+    answer: null,
+    emptyQuestion: false,
+    emptyAnswer: false
   }
 
   submitCard = () => {
     const { deck, fetchDeck, updateSelectedDeck, navigation } = this.props;
     const { question, answer } = this.state;
+    let emptyAnswer = false;
+    let emptyQuestion = false;
     const newCard = { question, answer };
+
+    if(!question){
+      emptyQuestion = true;
+    }
+
+    if(!answer){
+      emptyAnswer = true;
+    }
+
+    if(emptyQuestion || emptyAnswer){
+      this.setState({ emptyQuestion, emptyAnswer });
+      return;
+    }
 
     deck.questions.push(newCard);
     updateSelectedDeck(deck);
     fetchDeck(deck);
 
-    this.setState({ question: null,  answer: null });
+    this.setState({
+      question: null,
+      answer: null,
+      emptyQuestion,
+      emptyAnswer
+    });
     Alert.alert('Card inserted to the deck');
   }
 
   render() {
-    const { question, answer } = this.state;
+    const { question, answer, emptyQuestion, emptyAnswer } = this.state;
     return (
         <KeyboardAvoidingView style={ styles.addCardContainer }>
           <TextInput onChangeText={ (question) => this.setState({ question }) }
-            style={[ styles.inputs, { marginTop: 50 } ] }
+            style={[ styles.inputs, { marginTop: 50 }, emptyQuestion ? styles.emptyField : {} ] }
             placeholder='Card Question'
             value={ question }/>
           <TextInput onChangeText={ (answer) => this.setState({ answer }) }
-            style={[ styles.inputs, { marginTop: 20 } ] }
+            style={[ styles.inputs, { marginTop: 20 }, emptyAnswer ? styles.emptyField : {} ] }
             placeholder='Card Answer'
             value={ answer }/>
           <TouchableHighlight onPress={() => this.submitCard()}
@@ -68,6 +90,9 @@ const styles = StyleSheet.create({
     marginTop: 90,
     backgroundColor: black,
   },
+  emptyField: {
+    borderColor: red
+  }
 });
 
 const mapStateToProps = ({ selectedDeck }, what) =>{

@@ -2,7 +2,7 @@ import { Notifications, Permissions } from 'expo'
 import { AsyncStorage } from 'react-native';
 
 const NOTIFICATION_KEY = 'mobile-flashcards:notifications';
-
+const STATUS_GRANTED = 'granted';
 export const scheduleFirstNotification = () => {
   AsyncStorage.getItem(NOTIFICATION_KEY)
   .then(JSON.parse)
@@ -16,7 +16,7 @@ export const scheduleFirstNotification = () => {
 export const scheduleNotification = (value = 0) => {
   Permissions.askAsync(Permissions.NOTIFICATIONS)
   .then(({ status }) => {
-    if (status === 'granted') {
+    if (status === STATUS_GRANTED) {
       Notifications.cancelAllScheduledNotificationsAsync()
 
       let schuleDate = new Date();

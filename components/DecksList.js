@@ -4,14 +4,10 @@ import DeckPreview from './DeckPreview';
 import { defaultColor } from '../styles/colors';
 import { fetchAllDecks } from '../actions/DeckActions';
 import { connect } from 'react-redux';
-// TODO remove
-import { AsyncStorage } from 'react-native';
 
 class DecksList extends Component {
 
   componentDidMount = () => {
-    // TODO remove
-    // AsyncStorage.removeItem('mobile-flashcards:decks');
     this.props.fetchAllDecks();
   }
 
